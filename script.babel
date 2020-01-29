@@ -1,14 +1,15 @@
-/* Will make prettier later */
-
-
 class Editor extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      markdownInput: defaultText
+      markdownInput: defaultText,
+      editorMax: false,
+      previewerMax: false
     }
     
   this.handleChange = this.handleChange.bind(this);
+  this.changeClassEditor = this.changeClassEditor.bind(this);
+  this.changeClassPreviewer = this.changeClassPreviewer.bind(this);
   };
   
   handleChange(event) {
@@ -17,12 +18,73 @@ class Editor extends React.Component {
     });
   }
 
+  changeClassEditor() {
+    if (this.state.editorMax == false) {
+      this.setState(prevState => ({ 
+        editorMax: !prevState.editorMax 
+      }));
+    }
+    if (this.state.editorMax == true) {
+      this.setState(prevState => ({ 
+        editorMax: !prevState.editorMax 
+      }));
+    }    
+  }
+  
+  changeClassPreviewer() {
+    if (this.state.previewerMax == false) {
+      this.setState(prevState => ({ 
+        previewerMax: !prevState.previewerMax 
+      }));
+    }
+    if (this.state.previewerMax == true) {
+      this.setState(prevState => ({ 
+        previewerMax: !prevState.previewerMax 
+      }));
+    }      
+  }  
+
+  
   render() {
     return (
-      <div>
-        <textarea value={this.state.markdownInput} onChange={this.handleChange} style={{marginLeft: 600, height: 250, width: 400}}/>
-        <Preview markdownInput={this.state.markdownInput}/>
-      </div>
+      (this.state.editorMax == true ? 
+        <div id='containerdiv'>
+          <br />
+          <div id='editordiv'>
+          <h5 id='editorheader' className='maxscreeneditorheader'>Editor<i id='fullscreenbuttoneditor' onClick={this.changeClassEditor} className="fa fa-compress" aria-hidden="true"></i></h5>
+          <textarea id='editortext' className='maxscreeneditor' value={this.state.markdownInput} onChange={this.handleChange}/>
+          </div>        
+          <br />
+          <div id='previewerdiv' className='hidethecontent'>
+          <h5 id='previewheader'>Previewer<i id='fullscreenbuttonpreviewer' className="fa fa-arrows-alt" aria-hidden="true"></i></h5>
+          <Preview markdownInput={this.state.markdownInput}/>
+          </div>
+        </div> 
+       : this.state.previewerMax == true ?
+        <div id='containerdiv'>
+          <br />
+          <div id='editordiv' className='hidethecontent'>
+          <h5 id='editorheader'>Editor<i id='fullscreenbuttoneditor' onClick={this.changeClass} className="fa fa-arrows-alt" aria-hidden="true"></i></h5>
+          <textarea id='editortext' value={this.state.markdownInput} onChange={this.handleChange}/>
+          </div>        
+          <br />
+          <div id='previewerdiv'>
+          <h5 id='previewheader' className='maxscreenpreviewerheader'>Previewer<i id='fullscreenbuttonpreviewer' onClick={this.changeClassPreviewer} className="fa fa-compress" aria-hidden="true"></i></h5>
+          <Preview classNameForProp='maxscreenpreviewer' markdownInput={this.state.markdownInput}/>
+          </div>
+        </div> :       
+        <div id='containerdiv'>
+          <br />
+          <div id='editordiv'>
+          <h5 id='editorheader' className='editorheader'>Editor<i id='fullscreenbuttoneditor' onClick={this.changeClassEditor} className="fa fa-arrows-alt" aria-hidden="true"></i></h5>
+          <textarea id='editortext' className='editortext' value={this.state.markdownInput} onChange={this.handleChange}/>
+          </div>        
+          <br />
+          <div id='previewerdiv'>
+          <h5 id='previewheader' className='previewheader'>Previewer<i id='fullscreenbuttonpreviewer' onClick={this.changeClassPreviewer} className="fa fa-arrows-alt" aria-hidden="true"></i></h5>
+          <Preview classNameForProp='previewtext' markdownInput={this.state.markdownInput}/>
+          </div>
+        </div>) 
     );
   }
 }
@@ -40,20 +102,20 @@ class Preview extends React.Component {
       
   render() {
     return (
-      <div style={{color: 'red', border: '3px solid blue', height: 'auto', width: 500, marginLeft: 550, textAlign: 'center'}}dangerouslySetInnerHTML={this.getMarkdownText()} />
+      <div className={this.props.classNameForProp} dangerouslySetInnerHTML={this.getMarkdownText()} />
     );
   };
 }
 
-var defaultText = `
-# Welcome to my React Markdown Previewer!
+var defaultText = 
+`# Welcome to my React Markdown Previewer!
 
 ## This is a sub-heading...
 ### And here's some other cool stuff:
   
 Heres some code, \`<div></div>\`, between 2 backticks.
 
-\`\`\`
+\`\`\`\`
 // this is multi-line code:
 
 function anotherExample(firstLine, lastLine) {
@@ -61,22 +123,14 @@ function anotherExample(firstLine, lastLine) {
     return multiLineCode;
   }
 }
-\`\`\`
+\`\`\`\`
   
 You can also make text **bold**... whoa!
 Or _italic_.
 Or... wait for it... **_both!_**
 And feel free to go crazy ~~crossing stuff out~~.
 
-There's also [links](https://www.freecodecamp.com), and
-> Block Quotes!
-
-And if you want to get really crazy, even tables:
-
-Wild Header | Crazy Header | Another Header?
------------- | ------------- | ------------- 
-Your content can | be here, and it | can be here....
-And here. | Okay. | I think we get it.
+There's also [links](https://www.freecodecamp.com)
 
 - And of course there are lists.
   - Some are bulleted.
@@ -84,7 +138,7 @@ And here. | Okay. | I think we get it.
         - That look like this.
 
 
-1. And there are numbered lists too.
+1. And there are numbererd lists too.
 1. Use just 1s if you want! 
 1. But the list goes on...
 - Even if you use dashes or asterisks.
